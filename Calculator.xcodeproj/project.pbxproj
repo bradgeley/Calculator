@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1C658AA9228DDE8A00F77BBB /* CalculatorLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C658AA8228DDE8A00F77BBB /* CalculatorLogView.swift */; };
+		1C658AAB2291C2FF00F77BBB /* InputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C658AAA2291C2FE00F77BBB /* InputView.swift */; };
+		1C658AAD2291DFE300F77BBB /* InputScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C658AAC2291DFE300F77BBB /* InputScrollView.swift */; };
 		1CA3B8F3228C9CFF0059A3C4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA3B8F2228C9CFF0059A3C4 /* AppDelegate.swift */; };
 		1CA3B8F5228C9CFF0059A3C4 /* CalculatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA3B8F4228C9CFF0059A3C4 /* CalculatorViewController.swift */; };
 		1CA3B8F8228C9CFF0059A3C4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1CA3B8F6228C9CFF0059A3C4 /* Main.storyboard */; };
@@ -17,7 +18,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1C658AA8228DDE8A00F77BBB /* CalculatorLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorLogView.swift; sourceTree = "<group>"; };
+		1C658AAA2291C2FE00F77BBB /* InputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputView.swift; sourceTree = "<group>"; };
+		1C658AAC2291DFE300F77BBB /* InputScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputScrollView.swift; sourceTree = "<group>"; };
 		1CA3B8EF228C9CFF0059A3C4 /* Calculator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calculator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CA3B8F2228C9CFF0059A3C4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1CA3B8F4228C9CFF0059A3C4 /* CalculatorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorViewController.swift; sourceTree = "<group>"; };
@@ -39,6 +41,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1C59C56C22926B72002B3D12 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1CA3B8F2228C9CFF0059A3C4 /* AppDelegate.swift */,
+				1CA3B8F9228C9D000059A3C4 /* Assets.xcassets */,
+				1CA3B8FB228C9D000059A3C4 /* LaunchScreen.storyboard */,
+				1CA3B8FE228C9D000059A3C4 /* Info.plist */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		1CA3B8E6228C9CFF0059A3C4 = {
 			isa = PBXGroup;
 			children = (
@@ -58,14 +71,12 @@
 		1CA3B8F1228C9CFF0059A3C4 /* Calculator */ = {
 			isa = PBXGroup;
 			children = (
-				1CA3B8F2228C9CFF0059A3C4 /* AppDelegate.swift */,
 				1CA3B8F4228C9CFF0059A3C4 /* CalculatorViewController.swift */,
-				1C658AA8228DDE8A00F77BBB /* CalculatorLogView.swift */,
 				1CA3B904228C9D410059A3C4 /* Calculator.swift */,
+				1C658AAA2291C2FE00F77BBB /* InputView.swift */,
+				1C658AAC2291DFE300F77BBB /* InputScrollView.swift */,
 				1CA3B8F6228C9CFF0059A3C4 /* Main.storyboard */,
-				1CA3B8F9228C9D000059A3C4 /* Assets.xcassets */,
-				1CA3B8FB228C9D000059A3C4 /* LaunchScreen.storyboard */,
-				1CA3B8FE228C9D000059A3C4 /* Info.plist */,
+				1C59C56C22926B72002B3D12 /* Supporting Files */,
 			);
 			path = Calculator;
 			sourceTree = "<group>";
@@ -141,8 +152,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1C658AAD2291DFE300F77BBB /* InputScrollView.swift in Sources */,
 				1CA3B8F5228C9CFF0059A3C4 /* CalculatorViewController.swift in Sources */,
-				1C658AA9228DDE8A00F77BBB /* CalculatorLogView.swift in Sources */,
+				1C658AAB2291C2FF00F77BBB /* InputView.swift in Sources */,
 				1CA3B8F3228C9CFF0059A3C4 /* AppDelegate.swift in Sources */,
 				1CA3B905228C9D410059A3C4 /* Calculator.swift in Sources */,
 			);
@@ -292,7 +304,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R3368A24S6;
-				INFOPLIST_FILE = Calculator/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Calculator/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -310,7 +322,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R3368A24S6;
-				INFOPLIST_FILE = Calculator/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Calculator/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

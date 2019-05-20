@@ -8,96 +8,125 @@
 
 import UIKit
 
-class CalculatorViewController: UIViewController {
+class CalculatorViewController: UIViewController, UIScrollViewDelegate
+
+{
+    
+/* Constants */
     
     struct Constants {
-        
-        static let OutputFont = "Helvetica"
-        static let OutputFontSizeLandscape: CGFloat = 50.0
-        static let OutputFontSizePortrait: CGFloat = 30
-        
         static let ButtonFont = "Helvetica"
-        static let ButtonFontSizeLandscape: CGFloat = 35
-        static let ButtonFontSizePortrait: CGFloat = 30
-        
+        static let InputLabelFont = "Helvetica"
+        static let ButtonTextColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
     }
     
+    private func inputScaledFont() -> UIFont {
+        let frameSize = inputScrollView!.frame.height - 16
+        let fontSize = frameSize / 2
+        return UIFontMetrics.init(forTextStyle: .body).scaledFont(for: UIFont(name: Constants.InputLabelFont, size: fontSize)!)
+    }
+    
+    private func buttonScaledFont() -> UIFont {
+        let unscaledFontSize: CGFloat = ButtonsToFormat[0].frame.height / 3
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont(name: Constants.ButtonFont, size: unscaledFontSize)!)
+    }
+   
     
 /* IBOutlets */
-    
-    @IBOutlet var LabelsToFormat: [UILabel]!
+
     @IBOutlet var ButtonsToFormat: [UIButton]!
-    @IBOutlet weak var OutputLabel: UILabel!
-    @IBOutlet weak var InputLabel: UILabel!
-    @IBOutlet weak var LogView: CalculatorLogView!
+    @IBOutlet weak var LogScrollView: UIScrollView!
+    @IBOutlet weak var LogLabel: UILabel!
+    @IBOutlet weak var inputScrollView: InputScrollView!
     
     
 /* Variables */
     
-    var output: String? {
-        didSet {
-            OutputLabel.text = output
-            formatLabels()
+    private var calculator: Calculator?
+    
+    
+/* User Interaction Functions */
+    
+    @IBAction func CalculatorButtonPressed(_ sender: UIButton) {
+        let pressedButton = getButton(from: sender.tag)
+        
+        if (pressedButton == nil) {
+            print("Button not supported")
+        } else {
+            calculator!.buttonPressed(button: pressedButton!)
+            updateViewFromModel()
         }
     }
     
-    var input: String? {
-        didSet {
-            InputLabel.text = input
-            formatLabels()
+    private func getButton(from tag: Int) -> Calculator.SupportedButton? {
+        var pressedButton: Calculator.SupportedButton?
+        
+        //Number
+        if (tag >= 0 && tag <= 9) {
+            pressedButton = .Number(tag)
         }
-    }
-    
-    var outputLabelFont: UIFont? {
-        return ((UIDevice.current.orientation == UIDeviceOrientation.landscapeLeft
-              || UIDevice.current.orientation == UIDeviceOrientation.landscapeRight) ?
-              UIFont(name: Constants.OutputFont, size: Constants.OutputFontSizeLandscape)
-            : UIFont(name: Constants.OutputFont, size: Constants.OutputFontSizePortrait))
-    }
-    
-    var buttonFont: UIFont? {
-        return ((UIDevice.current.orientation == UIDeviceOrientation.landscapeLeft
-            || UIDevice.current.orientation == UIDeviceOrientation.landscapeRight) ?
-                UIFont(name: Constants.ButtonFont, size: Constants.ButtonFontSizeLandscape)
-            : UIFont(name: Constants.ButtonFont, size: Constants.ButtonFontSizePortrait))
-    }
-    
-    
-/* Private Functions */
-    
-    private func formatAllText() {
-        formatButtons()
-        formatLabels()
-    }
-    
-    private func formatButtons() {
-        for button in ButtonsToFormat {
-            let scaledFont = UIFontMetrics(forTextStyle: .headline).scaledFont(for: outputLabelFont!)
-            button.titleLabel?.font = scaledFont
+        //Operator
+        switch tag {
+        case 10: pressedButton = .Decimal
+        case 11: pressedButton = .Equals
+        case 12: pressedButton = .Add
+        case 13: pressedButton = .Subtract
+        case 14: pressedButton = .Muliply
+        case 15: pressedButton = .Divide
+        case 16: pressedButton = .ChangeSign
+        case 17: pressedButton = .Percent
+        case 18: pressedButton = .Clear
+        default: break
         }
-    }
-    
-    private func formatLabels() {
-        for label in LabelsToFormat {
-            let scaledFont = UIFontMetrics(forTextStyle: .headline).scaledFont(for: outputLabelFont!)
-            label.font = scaledFont
-        }
+        return pressedButton
     }
     
     
-/* Override functions */
+/* Display functions */
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //formatAllText()
+        configureCalculatorButtons()
+        calculator = Calculator()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+        setButtonFont(to: buttonScaledFont())
+        inputScrollView.update(text: calculator!.inputText, font: inputScaledFont())
+    }
+    
+    private func configureCalculatorButtons() {
+        for button in ButtonsToFormat {
+            button.titleLabel?.adjustsFontSizeToFitWidth = true //Prevents button text from not fitting container
+            button.setTitleColor(Constants.ButtonTextColor, for: .normal)
+        }
+    }
+    
+    private func setButtonFont(to font: UIFont) {
+        for button in ButtonsToFormat {
+            button.titleLabel?.font = font
+        }
+    }
+    
+    private func updateViewFromModel() {
+        inputScrollView!.update(text: calculator!.inputText, font: inputScaledFont())
+    }
+    
+    
+/* Reformatting Cases: */
+    
+    //BUG: Reformatting from portrait to landscape sometimes has unwanted offset values for the scroll view content
+    
     override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
-        //formatAllText()
+        setButtonFont(to: buttonScaledFont())
+        inputScrollView.update(text: calculator!.inputText, font: inputScaledFont())
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        //formatAllText()
+        setButtonFont(to: buttonScaledFont())
+        inputScrollView.update(text: calculator!.inputText, font: inputScaledFont())
     }
+    
 }
 
