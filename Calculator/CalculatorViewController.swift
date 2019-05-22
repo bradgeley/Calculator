@@ -20,6 +20,17 @@ class CalculatorViewController: UIViewController, UIScrollViewDelegate
         static let ButtonTextColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
     }
     
+    private func logScaledFont() -> UIFont {
+        let frameSize = logScrollView!.frame.height - 16
+        let fontSize: CGFloat?
+        if (UIDevice.current.orientation.isLandscape) {
+            fontSize = frameSize / 10
+        } else {
+            fontSize = frameSize / 12
+        }
+        return UIFontMetrics.init(forTextStyle: .body).scaledFont(for: UIFont(name: Constants.InputLabelFont, size: fontSize!)!)
+    }
+    
     private func inputScaledFont() -> UIFont {
         let frameSize = inputScrollView!.frame.height - 16
         let fontSize = frameSize / 2
@@ -27,17 +38,16 @@ class CalculatorViewController: UIViewController, UIScrollViewDelegate
     }
     
     private func buttonScaledFont() -> UIFont {
-        let unscaledFontSize: CGFloat = ButtonsToFormat[0].frame.height / 3
+        let unscaledFontSize: CGFloat = buttonsToFormat[0].frame.height / 3
         return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont(name: Constants.ButtonFont, size: unscaledFontSize)!)
     }
    
     
 /* IBOutlets */
 
-    @IBOutlet var ButtonsToFormat: [UIButton]!
-    @IBOutlet weak var LogScrollView: UIScrollView!
-    @IBOutlet weak var LogLabel: UILabel!
+    @IBOutlet weak var logScrollView: LogScrollView!
     @IBOutlet weak var inputScrollView: InputScrollView!
+    @IBOutlet var buttonsToFormat: [UIButton]!
     
     
 /* Variables */
@@ -63,7 +73,7 @@ class CalculatorViewController: UIViewController, UIScrollViewDelegate
         
         //Number
         if (tag >= 0 && tag <= 9) {
-            pressedButton = .Number(tag)
+            pressedButton = .Digit(tag)
         }
         //Operator
         switch tag {
@@ -92,25 +102,27 @@ class CalculatorViewController: UIViewController, UIScrollViewDelegate
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
-        setButtonFont(to: buttonScaledFont())
+        setAllButtonFont(to: buttonScaledFont())
         inputScrollView.update(text: calculator!.inputText, font: inputScaledFont())
+        logScrollView.update(text: calculator!.logText, font: logScaledFont())
     }
     
     private func configureCalculatorButtons() {
-        for button in ButtonsToFormat {
+        for button in buttonsToFormat {
             button.titleLabel?.adjustsFontSizeToFitWidth = true //Prevents button text from not fitting container
             button.setTitleColor(Constants.ButtonTextColor, for: .normal)
         }
     }
     
-    private func setButtonFont(to font: UIFont) {
-        for button in ButtonsToFormat {
+    private func setAllButtonFont(to font: UIFont) {
+        for button in buttonsToFormat {
             button.titleLabel?.font = font
         }
     }
     
     private func updateViewFromModel() {
         inputScrollView!.update(text: calculator!.inputText, font: inputScaledFont())
+        logScrollView!.update(text: calculator!.logText, font: logScaledFont())
     }
     
     
@@ -119,13 +131,15 @@ class CalculatorViewController: UIViewController, UIScrollViewDelegate
     //BUG: Reformatting from portrait to landscape sometimes has unwanted offset values for the scroll view content
     
     override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
-        setButtonFont(to: buttonScaledFont())
+        setAllButtonFont(to: buttonScaledFont())
         inputScrollView.update(text: calculator!.inputText, font: inputScaledFont())
+        logScrollView!.update(text: calculator!.logText, font: logScaledFont())
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        setButtonFont(to: buttonScaledFont())
+        setAllButtonFont(to: buttonScaledFont())
         inputScrollView.update(text: calculator!.inputText, font: inputScaledFont())
+        logScrollView!.update(text: calculator!.logText, font: logScaledFont())
     }
     
 }

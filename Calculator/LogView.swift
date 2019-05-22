@@ -1,5 +1,5 @@
 //
-//  InputView.swift
+//  LogView.swift
 //  Calculator
 //
 //  Created by Bradley Christensen on 5/19/19.
@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class InputView: UIView {
+class LogView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -23,9 +23,9 @@ class InputView: UIView {
     
     private let label: UILabel = {
         let label = UILabel()
-        label.numberOfLines = 1
-        label.textAlignment = .right
-        label.backgroundColor = #colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1)
+        label.numberOfLines = 0
+        label.textAlignment = .left
+        label.backgroundColor = #colorLiteral(red: 0.9529411793, green: 0.6862745285, blue: 0.1333333403, alpha: 1)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -33,30 +33,30 @@ class InputView: UIView {
     private func initLabelConstraints() {
         self.addSubview(label)
         label.topAnchor.constraint(equalTo: self.topAnchor, constant: 8).isActive = true
-        label.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -8).isActive = true
+        //label.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -8).isActive = true
         label.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 8).isActive = true
         label.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -8).isActive = true
     }
     
     public func updateAndOffset(to text: String, with font: UIFont) {
-        let superScrollView = (self.superview as! InputScrollView)
-        let oldViewWidth = self.frame.width
+        let superScrollView = (self.superview as! LogScrollView)
+        let oldViewHeight = self.frame.height
         
         label.text = text
         label.font = font
         label.sizeToFit() // Size label to new text
-        let screenWidth = superScrollView.frame.width
-        let newLabelWidth = label.frame.width
-        let newViewWidth = max(screenWidth, (newLabelWidth + 16))
+        let screenHeight = superScrollView.frame.height
+        let newLabelHeight = label.frame.height
+        let newViewHeight = max(screenHeight, (newLabelHeight + 16))
         
-        if (newViewWidth != screenWidth) {
-            superScrollView.horizontalContentOffset(by: newViewWidth - oldViewWidth)
+        if (newViewHeight != screenHeight) {
+            superScrollView.verticalContentOffset(by: newViewHeight - oldViewHeight)
         }
         
         //Update View
         self.setNeedsLayout() // Needed to apply label constraints
         self.constraints.last?.isActive = false //Last constraint should always be the latest width constraint
-        self.widthAnchor.constraint(equalToConstant: newViewWidth).isActive = true
+        self.heightAnchor.constraint(equalToConstant: newViewHeight).isActive = true
     }
     
 }

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1C59C57022933984002B3D12 /* LogScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C59C56F22933984002B3D12 /* LogScrollView.swift */; };
+		1C59C57222933991002B3D12 /* LogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C59C57122933991002B3D12 /* LogView.swift */; };
 		1C658AAB2291C2FF00F77BBB /* InputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C658AAA2291C2FE00F77BBB /* InputView.swift */; };
 		1C658AAD2291DFE300F77BBB /* InputScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C658AAC2291DFE300F77BBB /* InputScrollView.swift */; };
 		1CA3B8F3228C9CFF0059A3C4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA3B8F2228C9CFF0059A3C4 /* AppDelegate.swift */; };
@@ -18,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1C59C56F22933984002B3D12 /* LogScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogScrollView.swift; sourceTree = "<group>"; };
+		1C59C57122933991002B3D12 /* LogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogView.swift; sourceTree = "<group>"; };
 		1C658AAA2291C2FE00F77BBB /* InputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputView.swift; sourceTree = "<group>"; };
 		1C658AAC2291DFE300F77BBB /* InputScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputScrollView.swift; sourceTree = "<group>"; };
 		1CA3B8EF228C9CFF0059A3C4 /* Calculator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calculator.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -72,10 +76,12 @@
 			isa = PBXGroup;
 			children = (
 				1CA3B8F4228C9CFF0059A3C4 /* CalculatorViewController.swift */,
-				1CA3B904228C9D410059A3C4 /* Calculator.swift */,
-				1C658AAA2291C2FE00F77BBB /* InputView.swift */,
-				1C658AAC2291DFE300F77BBB /* InputScrollView.swift */,
 				1CA3B8F6228C9CFF0059A3C4 /* Main.storyboard */,
+				1CA3B904228C9D410059A3C4 /* Calculator.swift */,
+				1C658AAC2291DFE300F77BBB /* InputScrollView.swift */,
+				1C658AAA2291C2FE00F77BBB /* InputView.swift */,
+				1C59C56F22933984002B3D12 /* LogScrollView.swift */,
+				1C59C57122933991002B3D12 /* LogView.swift */,
 				1C59C56C22926B72002B3D12 /* Supporting Files */,
 			);
 			path = Calculator;
@@ -152,11 +158,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1C59C57022933984002B3D12 /* LogScrollView.swift in Sources */,
 				1C658AAD2291DFE300F77BBB /* InputScrollView.swift in Sources */,
 				1CA3B8F5228C9CFF0059A3C4 /* CalculatorViewController.swift in Sources */,
 				1C658AAB2291C2FF00F77BBB /* InputView.swift in Sources */,
 				1CA3B8F3228C9CFF0059A3C4 /* AppDelegate.swift in Sources */,
 				1CA3B905228C9D410059A3C4 /* Calculator.swift in Sources */,
+				1C59C57222933991002B3D12 /* LogView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

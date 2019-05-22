@@ -19,37 +19,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xhy-Ni-VSg" userLabel="Log Scroll View">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xhy-Ni-VSg" userLabel="Log Scroll View" customClass="LogScrollView" customModule="Calculator" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="44" width="414" height="280.33333333333331"/>
-                                <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lmb-TX-vGb" userLabel="Log Scrollable View">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="1000"/>
-                                        <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="bottomLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nvW-U2-Ymc" userLabel="Log Label">
-                                                <rect key="frame" x="10" y="10" width="394" height="980"/>
-                                                <color key="backgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                        </subviews>
-                                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <constraints>
-                                            <constraint firstAttribute="trailing" secondItem="nvW-U2-Ymc" secondAttribute="trailing" constant="10" id="6PX-m9-hoq"/>
-                                            <constraint firstItem="nvW-U2-Ymc" firstAttribute="leading" secondItem="lmb-TX-vGb" secondAttribute="leading" constant="10" id="BGe-Gt-4ml"/>
-                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="1000" id="NzG-ea-yZ1"/>
-                                            <constraint firstItem="nvW-U2-Ymc" firstAttribute="top" secondItem="lmb-TX-vGb" secondAttribute="top" constant="10" id="PMW-vz-g94"/>
-                                            <constraint firstAttribute="bottom" secondItem="nvW-U2-Ymc" secondAttribute="bottom" constant="10" id="qgV-px-SY5"/>
-                                        </constraints>
-                                    </view>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="lmb-TX-vGb" secondAttribute="bottom" id="2Rz-v1-1Lh"/>
-                                    <constraint firstItem="lmb-TX-vGb" firstAttribute="top" secondItem="Xhy-Ni-VSg" secondAttribute="top" id="8QO-Lp-7O7"/>
-                                    <constraint firstAttribute="trailing" secondItem="lmb-TX-vGb" secondAttribute="trailing" id="pXC-UD-KOn"/>
-                                    <constraint firstItem="lmb-TX-vGb" firstAttribute="width" secondItem="Xhy-Ni-VSg" secondAttribute="width" id="u8K-j6-awf"/>
-                                    <constraint firstItem="lmb-TX-vGb" firstAttribute="leading" secondItem="Xhy-Ni-VSg" secondAttribute="leading" id="yBp-KQ-wbL"/>
-                                </constraints>
                             </scrollView>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uGS-jd-0XO" userLabel="Input Scroll View" customClass="InputScrollView" customModule="Calculator" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="324.33333333333331" width="414" height="116.66666666666669"/>
@@ -369,28 +340,27 @@
                         </variation>
                     </view>
                     <connections>
-                        <outlet property="LogLabel" destination="nvW-U2-Ymc" id="sX1-Ia-ydG"/>
-                        <outlet property="LogScrollView" destination="Xhy-Ni-VSg" id="UrV-pj-dJI"/>
                         <outlet property="inputScrollView" destination="uGS-jd-0XO" id="eRP-X8-GN3"/>
-                        <outletCollection property="ButtonsToFormat" destination="WFr-M0-iEy" collectionClass="NSMutableArray" id="VP6-bP-NrT"/>
-                        <outletCollection property="ButtonsToFormat" destination="UlL-QA-gBb" collectionClass="NSMutableArray" id="YWb-Jz-w0o"/>
-                        <outletCollection property="ButtonsToFormat" destination="HvF-Jo-d2e" collectionClass="NSMutableArray" id="5hE-kn-9vj"/>
-                        <outletCollection property="ButtonsToFormat" destination="mg5-qR-UKQ" collectionClass="NSMutableArray" id="jxe-xd-OfR"/>
-                        <outletCollection property="ButtonsToFormat" destination="sms-uh-pfC" collectionClass="NSMutableArray" id="EOz-p6-GWR"/>
-                        <outletCollection property="ButtonsToFormat" destination="OT6-t9-qXY" collectionClass="NSMutableArray" id="QeM-u1-xW7"/>
-                        <outletCollection property="ButtonsToFormat" destination="qyU-5e-BVk" collectionClass="NSMutableArray" id="HGa-5r-wyc"/>
-                        <outletCollection property="ButtonsToFormat" destination="lWK-n6-Sdp" collectionClass="NSMutableArray" id="nR3-wn-5Bh"/>
-                        <outletCollection property="ButtonsToFormat" destination="teD-IP-dxx" collectionClass="NSMutableArray" id="yvO-WU-MZY"/>
-                        <outletCollection property="ButtonsToFormat" destination="PPm-OG-QqT" collectionClass="NSMutableArray" id="wAX-ka-WLF"/>
-                        <outletCollection property="ButtonsToFormat" destination="48s-fZ-frM" collectionClass="NSMutableArray" id="Gep-nX-cRC"/>
-                        <outletCollection property="ButtonsToFormat" destination="25q-5a-C5X" collectionClass="NSMutableArray" id="hWW-4e-olx"/>
-                        <outletCollection property="ButtonsToFormat" destination="yoP-u9-0g2" collectionClass="NSMutableArray" id="PCA-Vn-Lhq"/>
-                        <outletCollection property="ButtonsToFormat" destination="ByG-Ks-ue8" collectionClass="NSMutableArray" id="kG4-vm-N2a"/>
-                        <outletCollection property="ButtonsToFormat" destination="7OO-Z7-sKI" collectionClass="NSMutableArray" id="iTJ-Cw-6Qs"/>
-                        <outletCollection property="ButtonsToFormat" destination="31r-uf-BiM" collectionClass="NSMutableArray" id="F45-4T-GFM"/>
-                        <outletCollection property="ButtonsToFormat" destination="srI-ND-TKi" collectionClass="NSMutableArray" id="8N0-wM-p7X"/>
-                        <outletCollection property="ButtonsToFormat" destination="AFl-Oa-whg" collectionClass="NSMutableArray" id="hhk-bK-fTj"/>
-                        <outletCollection property="ButtonsToFormat" destination="drP-PK-L8F" collectionClass="NSMutableArray" id="UFP-VP-jXB"/>
+                        <outlet property="logScrollView" destination="Xhy-Ni-VSg" id="W4g-xA-b0y"/>
+                        <outletCollection property="buttonsToFormat" destination="WFr-M0-iEy" collectionClass="NSMutableArray" id="VP6-bP-NrT"/>
+                        <outletCollection property="buttonsToFormat" destination="UlL-QA-gBb" collectionClass="NSMutableArray" id="YWb-Jz-w0o"/>
+                        <outletCollection property="buttonsToFormat" destination="HvF-Jo-d2e" collectionClass="NSMutableArray" id="5hE-kn-9vj"/>
+                        <outletCollection property="buttonsToFormat" destination="mg5-qR-UKQ" collectionClass="NSMutableArray" id="jxe-xd-OfR"/>
+                        <outletCollection property="buttonsToFormat" destination="sms-uh-pfC" collectionClass="NSMutableArray" id="EOz-p6-GWR"/>
+                        <outletCollection property="buttonsToFormat" destination="OT6-t9-qXY" collectionClass="NSMutableArray" id="QeM-u1-xW7"/>
+                        <outletCollection property="buttonsToFormat" destination="qyU-5e-BVk" collectionClass="NSMutableArray" id="HGa-5r-wyc"/>
+                        <outletCollection property="buttonsToFormat" destination="lWK-n6-Sdp" collectionClass="NSMutableArray" id="nR3-wn-5Bh"/>
+                        <outletCollection property="buttonsToFormat" destination="teD-IP-dxx" collectionClass="NSMutableArray" id="yvO-WU-MZY"/>
+                        <outletCollection property="buttonsToFormat" destination="PPm-OG-QqT" collectionClass="NSMutableArray" id="wAX-ka-WLF"/>
+                        <outletCollection property="buttonsToFormat" destination="48s-fZ-frM" collectionClass="NSMutableArray" id="Gep-nX-cRC"/>
+                        <outletCollection property="buttonsToFormat" destination="25q-5a-C5X" collectionClass="NSMutableArray" id="hWW-4e-olx"/>
+                        <outletCollection property="buttonsToFormat" destination="yoP-u9-0g2" collectionClass="NSMutableArray" id="PCA-Vn-Lhq"/>
+                        <outletCollection property="buttonsToFormat" destination="ByG-Ks-ue8" collectionClass="NSMutableArray" id="kG4-vm-N2a"/>
+                        <outletCollection property="buttonsToFormat" destination="7OO-Z7-sKI" collectionClass="NSMutableArray" id="iTJ-Cw-6Qs"/>
+                        <outletCollection property="buttonsToFormat" destination="31r-uf-BiM" collectionClass="NSMutableArray" id="F45-4T-GFM"/>
+                        <outletCollection property="buttonsToFormat" destination="srI-ND-TKi" collectionClass="NSMutableArray" id="8N0-wM-p7X"/>
+                        <outletCollection property="buttonsToFormat" destination="AFl-Oa-whg" collectionClass="NSMutableArray" id="hhk-bK-fTj"/>
+                        <outletCollection property="buttonsToFormat" destination="drP-PK-L8F" collectionClass="NSMutableArray" id="UFP-VP-jXB"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
