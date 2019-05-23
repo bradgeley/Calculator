@@ -11,11 +11,10 @@ import Foundation
 class Calculator {
     
     
-/* Constants */
+/* * * * * * * * * * */
+/* Supported Buttons */
+/* * * * * * * * * */
     
-    // Maybe bad design? The button tags are listed below,
-    // which are the same as they are on the storyboard.
-    // Fix: The ViewController parses which button to press
     public enum SupportedButton {
         
         //Numbers       //Button Tag
@@ -34,9 +33,28 @@ class Calculator {
         
     }
     
-    private class Number {
-        var value: String = ""
+    
+/* * * * * * * * */
+/* Number Class */
+/* * * * * * * */
+    
+    private class Number { //Should remain a class so that the currentNumber is passed by reference
+        var value = ""
+        var containsDigits = false //Used to keep track of certain special cases logic
+        
+        init() {
+            
+        }
+        
+        init (value: String) {
+            self.value = value
+        }
     }
+    
+    
+/* * * * * * * * * */
+/* Equation Struct */
+/* * * * * * * * * */
     
     private struct Equation {
         public var numberList = [Number]()
@@ -44,26 +62,21 @@ class Calculator {
         public var answer = Number()
         public var onlyNumberIsAnswerFromLastEquation: Bool = false //Consider calculating this based on the answer from the last equation in the log, instead of keeping track of it myself
         
-        mutating func addNumber(num: Number) {
+        public mutating func addNumber(num: Number) {
             numberList += [num]
         }
         
-        mutating func addOperator(op: Operator) {
+        public mutating func addOperator(op: Operator) {
             operatorList += [op]
         }
         
-        func toString() -> String {
+        public func toString() -> String {
             var result = ""
             for index in 0..<numberList.count {
-                result += numberList[index].value
-                if (numberList.count != index) {
-                    result += " "
-                }
+                result += "(" + numberList[index].value + ")"
                 if (index < operatorList.count) {
-                    result += operatorList[index].rawValue
-                    if (operatorList.count != index) {
-                        result += " "
-                    }
+                    let Operator = operatorList[index].rawValue
+                    result += " " + Operator + " "
                 }
             }
             if (answer.value != "") {
@@ -76,6 +89,15 @@ class Calculator {
             return (numberList.isEmpty)
         }
         
+        public var containsMultiplication: Bool {
+            for op in operatorList {
+                if op == .MultipliedBy || op == .DividedBy {
+                    return true
+                }
+            }
+            return false
+        }
+        
         public var endsWithOperator: Bool {
             return (numberList.count != 0 && operatorList.count == numberList.count)
         }
@@ -85,10 +107,23 @@ class Calculator {
             addOperator(op: op)
         }
         
-        var lastNumber: Number {
-            return numberList[numberList.count - 1]
+        public mutating func removeLastNumber() {
+            if (numberList.count > 0) {
+                numberList.removeLast()
+            }
+        }
+        
+        public mutating func removeLastOperator() {
+            if (operatorList.count > 0) {
+                operatorList.removeLast()
+            }
         }
     }
+    
+    
+/* * * * * * * * * * * * */
+/* Operator Enumeration */
+/* * * * * * * * * * * */
     
     private enum Operator: String {
         case Plus = "+"
@@ -98,20 +133,20 @@ class Calculator {
     }
     
     
-/* API */ 
+/* * * * * * * * * * * * * * */
+/* Private Global Variables */
+/* * * * * * * * * * * * * */
     
-    //Public vars for view controller to access to update display
-    public var inputText: String {
-        return self.currentEquation.toString()
-    }
     private var currentEquation = Equation()
-    private var currentNumber = Number()
+    private var currentNumber = Number()      //Always the last number in the equation
     
-    public var logText = ""
     
-    public init() {
-        currentEquation.addNumber(num: currentNumber)
-    }
+/* * * */
+/* API */
+/* * * */
+    
+    public var inputText: String { return self.currentEquation.toString() }
+    public var logText = "" //STUB
     
     public func buttonPressed(button: Calculator.SupportedButton) {
         switch button {
@@ -128,7 +163,32 @@ class Calculator {
         }
     }
     
+    
+/* * * * * * * * * * * * * */
+/* Adding/Editing Numbers */
+/* * * * * * * * * * * * */
+    
     private func digitPressed(digit: Int) {
+        checkIfUserIsTypingANewNumberOrEquation()
+        currentNumber.value += String(digit)
+        currentNumber.containsDigits = true
+    }
+    
+    private func decimal() {
+        checkIfUserIsTypingANewNumberOrEquation()
+        if (currentNumber.value == "") {
+            currentNumber.value += "0"
+        }
+        if (!currentNumber.value.contains(".")) {
+            currentNumber.value += "."
+        }
+    }
+    
+    private func checkIfUserIsTypingANewNumberOrEquation() {
+        if (currentEquation.isEmpty) {
+            currentNumber = Number()
+            currentEquation.addNumber(num: currentNumber)
+        }
         if (currentEquation.endsWithOperator || currentEquation.onlyNumberIsAnswerFromLastEquation) {
             if (currentEquation.onlyNumberIsAnswerFromLastEquation) {
                 currentEquation = Equation()
@@ -137,90 +197,150 @@ class Calculator {
             currentNumber = Number()
             currentEquation.addNumber(num: currentNumber)
         }
-        currentNumber.value += String(digit)
     }
     
-    private func decimal() {
-        if (currentNumber.value == "") {
-            currentNumber.value += "0"
-        }
-        if (!inputText.contains(".")) {
-            currentNumber.value += "."
-        }
-    }
     
+/* * * * * * * * * * * * * * * * * * * */
+/* Solving Math When User Hits Equals */
+/* * * * * * * * * * * * * * * * * * */
+
     private func equals() {
-        //Do math
-        currentEquation.answer.value = "Urmomgae"
-        
-        //Log answer
-        if (logText != "") {
-            logText += "\n"
+        if (currentNumber.containsDigits && currentEquation.endsWithOperator == false) {
+            //Do math
+            currentEquation.answer = solveCurrentEquation()
+            
+            //Log answer
+            if (logText != "") {
+                logText += "\n"
+            }
+            logText += inputText
+            
+            //
+            currentNumber = currentEquation.answer
+            currentEquation = Equation()
+            currentEquation.addNumber(num: currentNumber)
+            currentEquation.onlyNumberIsAnswerFromLastEquation = true
         }
-        logText += inputText
-        currentNumber = currentEquation.answer
-        currentEquation = Equation()
-        currentEquation.addNumber(num: currentNumber)
-        currentEquation.onlyNumberIsAnswerFromLastEquation = true
     }
+    
+    private func solveCurrentEquation() -> Number {
+        //Save data
+        let equationCopy = currentEquation
+        
+        //Solve and collapse currentEquation into one answer at index 0
+        recursivelySolve()
+        //TODO: Consider changing to (add to the struct for Equation, not Calculator class)
+        //currentEquation.recursivelySolve()
+        
+        //Save result
+        let result = currentEquation.numberList[0]
+        result.containsDigits = true //Helps with logic so user can make answer negative after the answer displays
+        
+        //Put old equation back for displaying purposes
+        currentEquation = equationCopy
+        return result
+    }
+    
+    private func recursivelySolve() {
+        if (currentEquation.operatorList.count == 0) {
+            return
+        }
+        for index in 0..<currentEquation.operatorList.count {
+            let op = currentEquation.operatorList[index]
+            if (op == .DividedBy || op == .MultipliedBy || !currentEquation.containsMultiplication) {
+                let lhs = currentEquation.numberList[index]
+                let rhs = currentEquation.numberList[index + 1]
+                let result = solve(lhs: lhs, op: op, rhs: rhs)
+                currentEquation.numberList[index] = result
+                currentEquation.numberList.remove(at: index + 1)
+                currentEquation.operatorList.remove(at: index)
+                break
+            }
+        }
+        recursivelySolve()
+    }
+    
+    private func solve(lhs: Number, op: Operator, rhs: Number) -> Number {
+        let lhsDouble = Double(lhs.value)
+        let rhsDouble = Double(rhs.value)
+        if lhsDouble != nil, rhsDouble != nil {
+            switch op {
+            case .Plus: return Number(value: String(lhsDouble! + rhsDouble!))
+            case .Minus: return Number(value: String(lhsDouble! - rhsDouble!))
+            case .MultipliedBy: return Number(value: String(lhsDouble! * rhsDouble!))
+            case .DividedBy: return Number(value: String(lhsDouble! / rhsDouble!))
+            }
+        }
+        return Number()
+    }
+    
+/* * * * * * * * * * * * * * *  */
+/* Adding Operators to Equation */
+/* * * * * * * * * * * * * * * */
     
     private func divide() {
-        currentEquation.onlyNumberIsAnswerFromLastEquation = false
-        if (currentEquation.endsWithOperator) {
-            currentEquation.replaceLastOperator(with: Operator.DividedBy)
-        } else {
-            currentEquation.addOperator(op: Operator.DividedBy)
-        }
+        operatorWasClicked(op: Operator.DividedBy)
     }
     
     private func add() {
-        currentEquation.onlyNumberIsAnswerFromLastEquation = false
-        if (currentEquation.endsWithOperator) {
-            currentEquation.replaceLastOperator(with: Operator.Plus)
-        } else {
-            currentEquation.addOperator(op: Operator.Plus)
-        }
+        operatorWasClicked(op: Operator.Plus)
     }
     
     private func subtract() {
-        currentEquation.onlyNumberIsAnswerFromLastEquation = false
-        if (currentEquation.endsWithOperator) {
-            currentEquation.replaceLastOperator(with: Operator.Minus)
-        } else {
-            currentEquation.addOperator(op: Operator.Minus)
-        }
+        operatorWasClicked(op: Operator.Minus)
     }
     
     private func muliply() {
-        currentEquation.onlyNumberIsAnswerFromLastEquation = false
-        if (currentEquation.endsWithOperator) {
-            currentEquation.replaceLastOperator(with: Operator.MultipliedBy)
-        } else {
-            currentEquation.addOperator(op: Operator.MultipliedBy)
-        }
+        operatorWasClicked(op: Operator.MultipliedBy)
     }
     
-    private func changeSign() {
+    private func operatorWasClicked(op: Operator) {
         if (currentEquation.endsWithOperator) {
-            currentNumber = Number()
-            currentNumber.value += "-"
-            currentEquation.addNumber(num: currentNumber)
+            currentEquation.replaceLastOperator(with: op)
         } else {
-            if (currentNumber.value.contains("-")) {
-                currentNumber.value.removeFirst()
-            } else {
-                currentNumber.value = "-" + currentNumber.value
+            if (currentNumber.containsDigits) {
+                currentEquation.addOperator(op: op)
+                currentEquation.onlyNumberIsAnswerFromLastEquation = false
             }
         }
     }
     
-    private func percent() {
-        
+    private func changeSign() {
+        checkIfUserIsTypingANewNumberOrEquation()
+        if (currentNumber.value.contains("-")) {
+            currentNumber.value.removeFirst()
+            if (currentNumber.value == "") {
+                currentEquation.removeLastNumber()
+                let last = currentEquation.numberList.count - 1
+                currentNumber = currentEquation.numberList[last]
+            }
+        } else {
+            currentNumber.value = "-" + currentNumber.value
+        }
     }
     
+    private func percent() {
+        if (currentNumber.containsDigits) {
+            divide()
+            digitPressed(digit: 1)
+            digitPressed(digit: 0)
+            digitPressed(digit: 0)
+        }
+    }
+    
+    
+/* * * * * * * * * * * * * * * * */
+/* Clearing Data From Calculator */
+/* * * * * * * * * * * * * * * * */
+    
     private func clear() {
-        currentEquation = Equation()
-        logText = ""
+        if (currentEquation.endsWithOperator) {
+            currentEquation.removeLastOperator()
+        } else {
+            //All Clear
+            currentEquation = Equation()
+            logText = ""
+        }
     }
 
     
