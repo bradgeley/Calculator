@@ -11,9 +11,9 @@ import Foundation
 class Calculator {
     
     
+/* * * * * * * * * * * */
+/* Supported Buttons  */
 /* * * * * * * * * * */
-/* Supported Buttons */
-/* * * * * * * * * */
     
     public enum SupportedButton {
         
@@ -39,24 +39,41 @@ class Calculator {
 /* * * * * * * */
     
     private class Number { //Should remain a class so that the currentNumber is passed by reference
-        var value = ""
-        var containsDigits = false //Used to keep track of certain special cases logic
+        public var value = ""
+        public var containsDigits = false //Used to keep track of certain special cases logic
         
-        init() {
-            
-        }
+        init() {}
         
         init (value: String) {
             self.value = value
         }
+        
+        public var isInfinity: Bool {
+            return self.value == NumberFormatter().positiveInfinitySymbol
+                || self.value == NumberFormatter().negativeInfinitySymbol
+        }
+        
+        public var isNaN: Bool {
+            if (self.value.contains("-")) {
+                return self.value.split(separator: "-")[0] == NumberFormatter().notANumberSymbol
+            }
+            return self.value == NumberFormatter().notANumberSymbol
+        }
     }
     
     
-/* * * * * * * * * */
-/* Equation Struct */
+/* * * * * * * * * * */
+/* Equation Struct  */
 /* * * * * * * * * */
     
     private struct Equation {
+        
+        init() {}
+        
+        init(firstNumber: Number) {
+            self.addNumber(num: firstNumber)
+        }
+        
         public var numberList = [Number]()
         public var operatorList = [Operator]()
         public var answer = Number()
@@ -66,6 +83,13 @@ class Calculator {
             numberList += [num]
         }
         
+        public var lastNumber: Number? {
+            if (numberList.count > 0) {
+                return numberList[numberList.count - 1]
+            }
+            return nil
+        }
+        
         public mutating func addOperator(op: Operator) {
             operatorList += [op]
         }
@@ -73,15 +97,70 @@ class Calculator {
         public func toString() -> String {
             var result = ""
             for index in 0..<numberList.count {
-                result += "(" + numberList[index].value + ")"
+                result += "(" + addCommas(to: numberList[index]) + ")"
                 if (index < operatorList.count) {
                     let Operator = operatorList[index].rawValue
                     result += " " + Operator + " "
                 }
             }
             if (answer.value != "") {
-                result += " = " + answer.value
+                result += " = " + addCommas(to: answer)
             }
+            return result
+        }
+        
+        func addCommas(to num: Number) -> String {
+            
+            //Special Characters exception
+            guard (num.containsDigits) else { return num.value }
+            
+            //Remove commas, if any
+            let numWithNoCommas = removeCommas(num: num.value)
+            
+            //Remove and save sign, if any
+            var sign:String = ""
+            var numWithNoSign = numWithNoCommas
+            if (num.value.contains("-")) {
+                sign = "-"
+                numWithNoSign = String(numWithNoSign.dropFirst())
+            }
+            
+            //Remove and save decimal data, if any
+            let numSplitByDecimal:Array<Substring> = numWithNoSign.split(separator: Character("."), maxSplits: 1, omittingEmptySubsequences: true)
+            let numWithNoDecimal:String = String(numSplitByDecimal[0])
+            var decimal:String = (num.value.contains(".") ? "." : "") //save to add back later
+            if (numSplitByDecimal.count > 1) {
+                decimal += String(numSplitByDecimal[1])
+            }
+            
+            //Reverse the num for iteration, initialize the result
+            let numBackwards:String = String(numWithNoDecimal.reversed())
+            var numWithCommas:String = ""
+            var numRemaining = numBackwards
+            
+            //Iterate through numBackwards, adding each character and comma
+            var count = 0
+            for char in numBackwards {
+                numWithCommas += String(char)
+                numRemaining = String(numRemaining.dropFirst())
+                count += 1
+                
+                if (count == 3) {
+                    //The following if-statement prevents cases where the number length is multiple of 3 (e.g. ,100,000)
+                    if (numRemaining.count >= 1) {
+                        numWithCommas += ","
+                    }
+                    count = 0
+                }
+            }
+            
+            //Reverse the String back to normal, and add back the decimal/sign
+            return String(sign + String((numWithCommas.reversed() + decimal)))
+        }
+        
+        func removeCommas(num:String) -> String {
+            var result = num
+            result.removeAll(where: { "," == $0 } )
             return result
         }
         
@@ -107,6 +186,11 @@ class Calculator {
             addOperator(op: op)
         }
         
+        public mutating func replaceLastNumber(with num: Number) {
+            numberList.removeLast()
+            addNumber(num: num)
+        }
+        
         public mutating func removeLastNumber() {
             if (numberList.count > 0) {
                 numberList.removeLast()
@@ -118,6 +202,34 @@ class Calculator {
                 operatorList.removeLast()
             }
         }
+    }
+    
+    
+/* * * * * * * * * * * */
+/* EquationLog Struct */
+/* * * * * * * * * * */
+    
+    private struct EquationLog {
+        
+        public var log = [Equation]()
+        
+        public func toString() -> String {
+            var result = ""
+            for equation in log {
+                result += equation.toString() + "\n"
+            }
+            if (result.last == "\n") { result.removeLast() }
+            return result
+        }
+        
+        public mutating func add(equation eq: Equation) {
+            log.append(eq)
+        }
+        
+        public mutating func clear() {
+            log = [Equation]()
+        }
+        
     }
     
     
@@ -138,29 +250,59 @@ class Calculator {
 /* * * * * * * * * * * * * */
     
     private var currentEquation = Equation()
-    private var currentNumber = Number()      //Always the last number in the equation
+    private var currentNumber: Number? {
+        return currentEquation.lastNumber
+    }    //Always the optional last number in the equation, nil if equation is empty
+    private var log: EquationLog
+    private var formatter: NumberFormatter = NumberFormatter() //For more accurate/properly-rounded math
     
     
 /* * * */
 /* API */
 /* * * */
     
+    init() {
+        log = EquationLog()
+        formatter = NumberFormatter()
+        formatter.allowsFloats = true
+        formatter.maximumFractionDigits = 18 //This is a variable value
+        formatter.minimumFractionDigits = 1 //This is a variable value
+        formatter.roundingMode = .floor
+        formatter.numberStyle = .decimal
+    }
+    
     public var inputText: String { return self.currentEquation.toString() }
-    public var logText = "" //STUB
     
     public func buttonPressed(button: Calculator.SupportedButton) {
         switch button {
         case let .Digit(value): digitPressed(digit: value)
         case .Decimal:          decimal()
         case .Equals:           equals()
-        case .Divide:           divide()
-        case .Add:              add()
-        case .Subtract:         subtract()
-        case .Muliply:          muliply()
+        case .Divide:           operatorWasClicked(op: .DividedBy)
+        case .Add:              operatorWasClicked(op: .Plus)
+        case .Subtract:         operatorWasClicked(op: .Minus)
+        case .Muliply:          operatorWasClicked(op: .MultipliedBy)
         case .ChangeSign:       changeSign()
         case .Percent:          percent()
         case .Clear:            clear()
         }
+    }
+    
+    public func getLogText() -> String {
+        return log.toString()
+    }
+    
+    public var shouldClearAll: Bool {
+        if (!currentEquation.isEmpty) {
+            if (currentEquation.endsWithOperator) {
+                return false
+            } else {
+                if (currentEquation.lastNumber!.containsDigits || currentEquation.lastNumber!.value.contains(".") || currentEquation.lastNumber!.value.contains("-")) {
+                    return false
+                }
+            }
+        }
+        return true
     }
     
     
@@ -170,32 +312,39 @@ class Calculator {
     
     private func digitPressed(digit: Int) {
         checkIfUserIsTypingANewNumberOrEquation()
-        currentNumber.value += String(digit)
-        currentNumber.containsDigits = true
+        if let value = formatter.number(from: currentNumber!.value)?.doubleValue, value == 0 {
+            if (digit == 0 && !currentNumber!.value.contains(".")) {
+                return
+            } else {
+                if (!currentNumber!.value.contains(".")) {
+                    currentEquation.removeLastNumber()
+                    currentEquation.addNumber(num: Number())
+                }
+            }
+        }
+        currentNumber!.value += String(digit)
+        currentNumber!.containsDigits = true
     }
     
     private func decimal() {
         checkIfUserIsTypingANewNumberOrEquation()
-        if (currentNumber.value == "") {
-            currentNumber.value += "0"
+        if (currentNumber!.value == "" || currentNumber!.value == "-") {
+            currentNumber!.value += "0"
+            currentNumber?.containsDigits = true
         }
-        if (!currentNumber.value.contains(".")) {
-            currentNumber.value += "."
+        if (!currentNumber!.value.contains(".")) {
+            currentNumber!.value += "."
         }
     }
     
     private func checkIfUserIsTypingANewNumberOrEquation() {
-        if (currentEquation.isEmpty) {
-            currentNumber = Number()
-            currentEquation.addNumber(num: currentNumber)
+        if (currentEquation.isEmpty || currentEquation.endsWithOperator) {
+            currentEquation.addNumber(num: Number())
         }
-        if (currentEquation.endsWithOperator || currentEquation.onlyNumberIsAnswerFromLastEquation) {
-            if (currentEquation.onlyNumberIsAnswerFromLastEquation) {
-                currentEquation = Equation()
-                currentEquation.onlyNumberIsAnswerFromLastEquation = false
-            }
-            currentNumber = Number()
-            currentEquation.addNumber(num: currentNumber)
+        
+        if (currentEquation.onlyNumberIsAnswerFromLastEquation || currentEquation.lastNumber?.value.rangeOfCharacter(from: CharacterSet.letters) != nil) {
+            currentEquation = Equation(firstNumber: Number())
+            currentEquation.onlyNumberIsAnswerFromLastEquation = false
         }
     }
     
@@ -203,23 +352,23 @@ class Calculator {
 /* * * * * * * * * * * * * * * * * * * */
 /* Solving Math When User Hits Equals */
 /* * * * * * * * * * * * * * * * * * */
-
+    
+    //BUG: Changing sign changes sign of answers in the Log
+    
     private func equals() {
-        if (currentNumber.containsDigits && currentEquation.endsWithOperator == false) {
-            //Do math
-            currentEquation.answer = solveCurrentEquation()
-            
-            //Log answer
-            if (logText != "") {
-                logText += "\n"
+        if (!currentEquation.isEmpty) {
+            if (currentNumber!.containsDigits && !currentEquation.endsWithOperator) {
+                //Do math
+                currentEquation.answer = solveCurrentEquation()
+                
+                //Log answer
+                log.add(equation: currentEquation)
+                
+                //Put answer in a new equation so user can use it for more math
+                currentEquation = Equation(firstNumber: Number(value: currentEquation.answer.value))
+                currentEquation.onlyNumberIsAnswerFromLastEquation = true //Set to catch when the user wants to type a new number over the last answer
+                currentNumber?.containsDigits = true
             }
-            logText += inputText
-            
-            //
-            currentNumber = currentEquation.answer
-            currentEquation = Equation()
-            currentEquation.addNumber(num: currentNumber)
-            currentEquation.onlyNumberIsAnswerFromLastEquation = true
         }
     }
     
@@ -229,8 +378,6 @@ class Calculator {
         
         //Solve and collapse currentEquation into one answer at index 0
         recursivelySolve()
-        //TODO: Consider changing to (add to the struct for Equation, not Calculator class)
-        //currentEquation.recursivelySolve()
         
         //Save result
         let result = currentEquation.numberList[0]
@@ -261,44 +408,38 @@ class Calculator {
     }
     
     private func solve(lhs: Number, op: Operator, rhs: Number) -> Number {
-        let lhsDouble = Double(lhs.value)
-        let rhsDouble = Double(rhs.value)
-        if lhsDouble != nil, rhsDouble != nil {
-            switch op {
-            case .Plus: return Number(value: String(lhsDouble! + rhsDouble!))
-            case .Minus: return Number(value: String(lhsDouble! - rhsDouble!))
-            case .MultipliedBy: return Number(value: String(lhsDouble! * rhsDouble!))
-            case .DividedBy: return Number(value: String(lhsDouble! / rhsDouble!))
-            }
+        guard (!lhs.isNaN && !rhs.isNaN) else { return Number(value: formatter.notANumberSymbol) }
+        let lhsDouble = formatter.number(from: lhs.value)!.doubleValue
+        let rhsDouble = formatter.number(from: rhs.value)!.doubleValue
+        let result = Number()
+        switch op {
+        case .Plus: result.value = formatter.string(from: NSNumber(value: lhsDouble + rhsDouble))!
+        case .Minus: result.value = formatter.string(from: NSNumber(value: lhsDouble - rhsDouble))!
+        case .MultipliedBy: result.value = formatter.string(from: NSNumber(value: lhsDouble * rhsDouble))!
+        case .DividedBy: result.value = formatter.string(from: NSNumber(value: lhsDouble / rhsDouble))!
         }
-        return Number()
+        if (result.value == NumberFormatter().positiveInfinitySymbol || result.value == NumberFormatter().negativeInfinitySymbol || abs(num: result) == NumberFormatter().notANumberSymbol) {
+            result.containsDigits = false
+        }
+        return result
     }
     
-/* * * * * * * * * * * * * * *  */
+    private func abs(num: Number) -> String {
+        if num.value.contains("-") {
+            return String(num.value.dropFirst())
+        }
+        return num.value
+    }
+    
+/* * * * * * * * * * * * * * * * */
 /* Adding Operators to Equation */
 /* * * * * * * * * * * * * * * */
-    
-    private func divide() {
-        operatorWasClicked(op: Operator.DividedBy)
-    }
-    
-    private func add() {
-        operatorWasClicked(op: Operator.Plus)
-    }
-    
-    private func subtract() {
-        operatorWasClicked(op: Operator.Minus)
-    }
-    
-    private func muliply() {
-        operatorWasClicked(op: Operator.MultipliedBy)
-    }
     
     private func operatorWasClicked(op: Operator) {
         if (currentEquation.endsWithOperator) {
             currentEquation.replaceLastOperator(with: op)
         } else {
-            if (currentNumber.containsDigits) {
+            if (!currentEquation.isEmpty && currentEquation.lastNumber!.containsDigits) {
                 currentEquation.addOperator(op: op)
                 currentEquation.onlyNumberIsAnswerFromLastEquation = false
             }
@@ -306,42 +447,61 @@ class Calculator {
     }
     
     private func changeSign() {
-        checkIfUserIsTypingANewNumberOrEquation()
-        if (currentNumber.value.contains("-")) {
-            currentNumber.value.removeFirst()
-            if (currentNumber.value == "") {
+        if (!currentEquation.onlyNumberIsAnswerFromLastEquation) {
+            checkIfUserIsTypingANewNumberOrEquation()
+        }
+        if (currentNumber!.isInfinity) {
+            changeSignOfInfinity()
+            return
+        }
+        if (currentEquation.lastNumber!.value.contains("-")) {
+            currentEquation.lastNumber!.value.removeFirst()
+            if (currentEquation.lastNumber!.value == "") {
                 currentEquation.removeLastNumber()
-                let last = currentEquation.numberList.count - 1
-                currentNumber = currentEquation.numberList[last]
             }
         } else {
-            currentNumber.value = "-" + currentNumber.value
+            currentEquation.lastNumber!.value = "-" + currentEquation.lastNumber!.value
+        }
+    }
+    
+    private func changeSignOfInfinity() {
+        if (currentNumber!.value == formatter.positiveInfinitySymbol) {
+            currentNumber!.value = formatter.negativeInfinitySymbol
+        } else {
+            currentNumber!.value = formatter.positiveInfinitySymbol
         }
     }
     
     private func percent() {
-        if (currentNumber.containsDigits) {
-            divide()
-            digitPressed(digit: 1)
-            digitPressed(digit: 0)
-            digitPressed(digit: 0)
+        if (!currentEquation.isEmpty && currentEquation.lastNumber!.containsDigits && !currentEquation.endsWithOperator) {
+            currentEquation.replaceLastNumber(with: solve(lhs: currentEquation.lastNumber!, op: .DividedBy, rhs: Number(value: "100")))
+            currentNumber?.containsDigits = true
         }
     }
     
     
-/* * * * * * * * * * * * * * * * */
-/* Clearing Data From Calculator */
+/* * * * * * * * * * * * * * * * * */
+/* Clearing Data From Calculator  */
 /* * * * * * * * * * * * * * * * */
     
     private func clear() {
-        if (currentEquation.endsWithOperator) {
-            currentEquation.removeLastOperator()
-        } else {
-            //All Clear
-            currentEquation = Equation()
-            logText = ""
+        if (!currentEquation.isEmpty) {
+            //Clear operator
+            if (currentEquation.endsWithOperator) {
+                currentEquation.removeLastOperator()
+                return
+            } else {
+                //Clear current number
+                if (currentEquation.lastNumber!.containsDigits || currentEquation.lastNumber!.value.contains(".") || currentEquation.lastNumber!.value.contains("-")) {
+                    currentEquation.removeLastNumber()
+                    currentEquation.onlyNumberIsAnswerFromLastEquation = false
+                    return
+                }
+            }
         }
+        //All Clear
+        currentEquation = Equation()
+        log.clear()
     }
-
     
 }

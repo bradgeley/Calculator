@@ -48,6 +48,7 @@ class CalculatorViewController: UIViewController, UIScrollViewDelegate
     @IBOutlet weak var logScrollView: LogScrollView!
     @IBOutlet weak var inputScrollView: InputScrollView!
     @IBOutlet var buttonsToFormat: [UIButton]!
+    @IBOutlet weak var ClearButton: UIButton!
     
     
 /* Variables */
@@ -59,13 +60,8 @@ class CalculatorViewController: UIViewController, UIScrollViewDelegate
     
     @IBAction func CalculatorButtonPressed(_ sender: UIButton) {
         let pressedButton = getButton(from: sender.tag)
-        
-        if (pressedButton == nil) {
-            print("Button not supported")
-        } else {
-            calculator!.buttonPressed(button: pressedButton!)
-            updateViewFromModel()
-        }
+        calculator!.buttonPressed(button: pressedButton!)
+        updateViewFromModel()
     }
     
     private func getButton(from tag: Int) -> Calculator.SupportedButton? {
@@ -103,8 +99,7 @@ class CalculatorViewController: UIViewController, UIScrollViewDelegate
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         setAllButtonFont(to: buttonScaledFont())
-        inputScrollView.update(text: calculator!.inputText, font: inputScaledFont())
-        logScrollView.update(text: calculator!.logText, font: logScaledFont())
+        updateViewFromModel()
     }
     
     private func configureCalculatorButtons() {
@@ -122,7 +117,12 @@ class CalculatorViewController: UIViewController, UIScrollViewDelegate
     
     private func updateViewFromModel() {
         inputScrollView!.update(text: calculator!.inputText, font: inputScaledFont())
-        logScrollView!.update(text: calculator!.logText, font: logScaledFont())
+        logScrollView!.update(text: calculator!.getLogText(), font: logScaledFont())
+        if (calculator!.shouldClearAll) {
+            ClearButton.setTitle("AC", for: .normal)
+        } else {
+            ClearButton.setTitle("C", for: .normal)
+        }
     }
     
     
@@ -132,14 +132,12 @@ class CalculatorViewController: UIViewController, UIScrollViewDelegate
     
     override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
         setAllButtonFont(to: buttonScaledFont())
-        inputScrollView.update(text: calculator!.inputText, font: inputScaledFont())
-        logScrollView!.update(text: calculator!.logText, font: logScaledFont())
+        updateViewFromModel()
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         setAllButtonFont(to: buttonScaledFont())
-        inputScrollView.update(text: calculator!.inputText, font: inputScaledFont())
-        logScrollView!.update(text: calculator!.logText, font: logScaledFont())
+        updateViewFromModel()
     }
     
 }

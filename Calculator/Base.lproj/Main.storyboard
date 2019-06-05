@@ -340,6 +340,7 @@
                         </variation>
                     </view>
                     <connections>
+                        <outlet property="ClearButton" destination="WFr-M0-iEy" id="McD-tf-FJ5"/>
                         <outlet property="inputScrollView" destination="uGS-jd-0XO" id="eRP-X8-GN3"/>
                         <outlet property="logScrollView" destination="Xhy-Ni-VSg" id="W4g-xA-b0y"/>
                         <outletCollection property="buttonsToFormat" destination="WFr-M0-iEy" collectionClass="NSMutableArray" id="VP6-bP-NrT"/>

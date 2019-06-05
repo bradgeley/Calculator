@@ -22,6 +22,7 @@
 /* Begin PBXFileReference section */
 		1C59C56F22933984002B3D12 /* LogScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogScrollView.swift; sourceTree = "<group>"; };
 		1C59C57122933991002B3D12 /* LogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogView.swift; sourceTree = "<group>"; };
+		1C59C576229857F3002B3D12 /* Calculator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Calculator.entitlements; sourceTree = "<group>"; };
 		1C658AAA2291C2FE00F77BBB /* InputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputView.swift; sourceTree = "<group>"; };
 		1C658AAC2291DFE300F77BBB /* InputScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputScrollView.swift; sourceTree = "<group>"; };
 		1CA3B8EF228C9CFF0059A3C4 /* Calculator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calculator.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -48,12 +49,20 @@
 		1C59C56C22926B72002B3D12 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				1C59C576229857F3002B3D12 /* Calculator.entitlements */,
 				1CA3B8F2228C9CFF0059A3C4 /* AppDelegate.swift */,
 				1CA3B8F9228C9D000059A3C4 /* Assets.xcassets */,
 				1CA3B8FB228C9D000059A3C4 /* LaunchScreen.storyboard */,
 				1CA3B8FE228C9D000059A3C4 /* Info.plist */,
 			);
 			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1C59C575229856EA002B3D12 /* Unit Tests */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Unit Tests";
 			sourceTree = "<group>";
 		};
 		1CA3B8E6228C9CFF0059A3C4 = {
@@ -82,6 +91,7 @@
 				1C658AAA2291C2FE00F77BBB /* InputView.swift */,
 				1C59C56F22933984002B3D12 /* LogScrollView.swift */,
 				1C59C57122933991002B3D12 /* LogView.swift */,
+				1C59C575229856EA002B3D12 /* Unit Tests */,
 				1C59C56C22926B72002B3D12 /* Supporting Files */,
 			);
 			path = Calculator;
@@ -119,6 +129,14 @@
 				TargetAttributes = {
 					1CA3B8EE228C9CFF0059A3C4 = {
 						CreatedOnToolsVersion = 10.2.1;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 0;
+							};
+							com.apple.DataProtection = {
+								enabled = 0;
+							};
+						};
 					};
 				};
 			};

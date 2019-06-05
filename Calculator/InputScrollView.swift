@@ -23,7 +23,7 @@ class InputScrollView: UIScrollView {
     
     public let contentView: InputView = {
         let contentView = InputView()
-        contentView.backgroundColor = #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1)
+        contentView.backgroundColor = #colorLiteral(red: 0.1019607857, green: 0.2784313858, blue: 0.400000006, alpha: 1)
         contentView.translatesAutoresizingMaskIntoConstraints = false
         return contentView
     }()

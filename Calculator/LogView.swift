@@ -25,7 +25,7 @@ class LogView: UIView {
         let label = UILabel()
         label.numberOfLines = 0
         label.textAlignment = .left
-        label.backgroundColor = #colorLiteral(red: 0.9529411793, green: 0.6862745285, blue: 0.1333333403, alpha: 1)
+        label.backgroundColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
