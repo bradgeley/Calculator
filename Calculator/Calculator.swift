@@ -146,15 +146,13 @@ class Calculator {
                 count += 1
                 
                 if (count == 3) {
-                    //The following if-statement prevents cases where the number length is multiple of 3 (e.g. ,100,000)
+                    //The following if-statement prevents cases where the number length is multiple of 3 (e.g. -,100,000.2)
                     if (numRemaining.count >= 1) {
                         numWithCommas += ","
                     }
                     count = 0
                 }
             }
-            
-            //Reverse the String back to normal, and add back the decimal/sign
             return String(sign + String((numWithCommas.reversed() + decimal)))
         }
         
