@@ -20,15 +20,15 @@ class Calculator {
         //Numbers       //Button Tag
         case Digit(Int) //0-9
         case Decimal    //10
-        
+
         //Operators
         case Equals     //11
-        case Divide     //12
-        case Add        //13
-        case Subtract   //14
-        case Muliply    //15
+        case Add        //12
+        case Subtract   //13
+        case Muliply    //14
+        case Divide     //15
         case ChangeSign //16
-        case Percent    //17
+        case Exponent   //17
         case Clear      //18
         
     }
@@ -40,7 +40,7 @@ class Calculator {
     
     private class Number { //Should remain a class so that the currentNumber is passed by reference
         public var value = ""
-        public var containsDigits = false //Used to keep track of certain special cases logic
+        public var containsDigits = false //Used to keep track of certain special cases logic. If the user has entered digits, we want certain buttons to act differently than if they haven't
         
         init() {}
         
@@ -54,10 +54,22 @@ class Calculator {
         }
         
         public var isNaN: Bool {
-            if (self.value.contains("-")) {
+            if (self.value.contains("-") && self.containsDigits) {
                 return self.value.split(separator: "-")[0] == NumberFormatter().notANumberSymbol
             }
             return self.value == NumberFormatter().notANumberSymbol
+        }
+        
+        public var isNegative: Bool {
+            if self.value == NumberFormatter().negativeInfinitySymbol {
+                return true
+            }
+            if !self.isInfinity && !self.isNaN {
+                if self.value.contains("-") {
+                    return true
+                }
+            }
+            return false
         }
     }
     
@@ -97,7 +109,11 @@ class Calculator {
         public func toString() -> String {
             var result = ""
             for index in 0..<numberList.count {
-                result += "(" + addCommas(to: numberList[index]) + ")"
+                if (numberList[index].isNegative) {
+                    result += "(" + addCommas(to: numberList[index]) + ")"
+                } else {
+                    result += addCommas(to: numberList[index])
+                }
                 if (index < operatorList.count) {
                     let Operator = operatorList[index].rawValue
                     result += " " + Operator + " "
@@ -109,7 +125,7 @@ class Calculator {
             return result
         }
         
-        func addCommas(to num: Number) -> String {
+        private func addCommas(to num: Number) -> String {
             
             //Special Characters exception
             guard (num.containsDigits) else { return num.value }
@@ -156,7 +172,7 @@ class Calculator {
             return String(sign + String((numWithCommas.reversed() + decimal)))
         }
         
-        func removeCommas(num:String) -> String {
+        private func removeCommas(num:String) -> String {
             var result = num
             result.removeAll(where: { "," == $0 } )
             return result
@@ -175,18 +191,27 @@ class Calculator {
             return false
         }
         
-        public var endsWithOperator: Bool {
-            return (numberList.count != 0 && operatorList.count == numberList.count)
+        public var containsExponents: Bool {
+            for op in operatorList {
+                if op == .ToThePowerOf {
+                    return true
+                }
+            }
+            return false
         }
         
-        public mutating func replaceLastOperator(with op: Operator) {
-            operatorList.removeLast()
-            addOperator(op: op)
+        public var endsWithOperator: Bool {
+            return (numberList.count != 0 && operatorList.count == numberList.count)
         }
         
         public mutating func replaceLastNumber(with num: Number) {
             numberList.removeLast()
             addNumber(num: num)
+        }
+        
+        public mutating func replaceLastOperator(with op: Operator) {
+            operatorList.removeLast()
+            addOperator(op: op)
         }
         
         public mutating func removeLastNumber() {
@@ -240,6 +265,7 @@ class Calculator {
         case Minus = "-"
         case DividedBy = "/"
         case MultipliedBy = "*"
+        case ToThePowerOf = "^"
     }
     
     
@@ -263,8 +289,8 @@ class Calculator {
         log = EquationLog()
         formatter = NumberFormatter()
         formatter.allowsFloats = true
-        formatter.maximumFractionDigits = 18 //This is a variable value
-        formatter.minimumFractionDigits = 1 //This is a variable value
+        formatter.maximumFractionDigits = 18
+        formatter.minimumFractionDigits = 1
         formatter.roundingMode = .floor
         formatter.numberStyle = .decimal
     }
@@ -281,7 +307,7 @@ class Calculator {
         case .Subtract:         operatorWasClicked(op: .Minus)
         case .Muliply:          operatorWasClicked(op: .MultipliedBy)
         case .ChangeSign:       changeSign()
-        case .Percent:          percent()
+        case .Exponent:         operatorWasClicked(op: .ToThePowerOf) //Remove and swap with Exponent
         case .Clear:            clear()
         }
     }
@@ -295,7 +321,7 @@ class Calculator {
             if (currentEquation.endsWithOperator) {
                 return false
             } else {
-                if (currentEquation.lastNumber!.containsDigits || currentEquation.lastNumber!.value.contains(".") || currentEquation.lastNumber!.value.contains("-")) {
+                if (currentNumber!.containsDigits || currentNumber!.value.contains(".") || currentNumber!.value.contains("-")) {
                     return false
                 }
             }
@@ -392,14 +418,26 @@ class Calculator {
         }
         for index in 0..<currentEquation.operatorList.count {
             let op = currentEquation.operatorList[index]
-            if (op == .DividedBy || op == .MultipliedBy || !currentEquation.containsMultiplication) {
-                let lhs = currentEquation.numberList[index]
-                let rhs = currentEquation.numberList[index + 1]
-                let result = solve(lhs: lhs, op: op, rhs: rhs)
-                currentEquation.numberList[index] = result
-                currentEquation.numberList.remove(at: index + 1)
-                currentEquation.operatorList.remove(at: index)
-                break
+            if (currentEquation.containsExponents) {
+                if (op == .ToThePowerOf) {
+                    let lhs = currentEquation.numberList[index]
+                    let rhs = currentEquation.numberList[index + 1]
+                    let result = solve(lhs: lhs, op: op, rhs: rhs)
+                    currentEquation.numberList[index] = result
+                    currentEquation.numberList.remove(at: index + 1)
+                    currentEquation.operatorList.remove(at: index)
+                    break
+                }
+            } else {
+                if (op == .DividedBy || op == .MultipliedBy || !currentEquation.containsMultiplication) {
+                    let lhs = currentEquation.numberList[index]
+                    let rhs = currentEquation.numberList[index + 1]
+                    let result = solve(lhs: lhs, op: op, rhs: rhs)
+                    currentEquation.numberList[index] = result
+                    currentEquation.numberList.remove(at: index + 1)
+                    currentEquation.operatorList.remove(at: index)
+                    break
+                }
             }
         }
         recursivelySolve()
@@ -415,6 +453,7 @@ class Calculator {
         case .Minus: result.value = formatter.string(from: NSNumber(value: lhsDouble - rhsDouble))!
         case .MultipliedBy: result.value = formatter.string(from: NSNumber(value: lhsDouble * rhsDouble))!
         case .DividedBy: result.value = formatter.string(from: NSNumber(value: lhsDouble / rhsDouble))!
+        case .ToThePowerOf: result.value = formatter.string(from: NSNumber(value: pow(lhsDouble, rhsDouble)))!
         }
         if (result.value == NumberFormatter().positiveInfinitySymbol || result.value == NumberFormatter().negativeInfinitySymbol || abs(num: result) == NumberFormatter().notANumberSymbol) {
             result.containsDigits = false
@@ -452,13 +491,13 @@ class Calculator {
             changeSignOfInfinity()
             return
         }
-        if (currentEquation.lastNumber!.value.contains("-")) {
-            currentEquation.lastNumber!.value.removeFirst()
-            if (currentEquation.lastNumber!.value == "") {
+        if (currentNumber!.value.contains("-")) {
+            currentNumber!.value.removeFirst()
+            if (currentNumber!.value == "") {
                 currentEquation.removeLastNumber()
             }
         } else {
-            currentEquation.lastNumber!.value = "-" + currentEquation.lastNumber!.value
+            currentNumber!.value = "-" + currentEquation.lastNumber!.value
         }
     }
     
@@ -470,12 +509,13 @@ class Calculator {
         }
     }
     
-    private func percent() {
-        if (!currentEquation.isEmpty && currentEquation.lastNumber!.containsDigits && !currentEquation.endsWithOperator) {
-            currentEquation.replaceLastNumber(with: solve(lhs: currentEquation.lastNumber!, op: .DividedBy, rhs: Number(value: "100")))
-            currentNumber?.containsDigits = true
-        }
-    }
+// Removed as of 1.1
+//    private func percent() {
+//        if (!currentEquation.isEmpty && currentEquation.lastNumber!.containsDigits && !currentEquation.endsWithOperator) {
+//            currentEquation.replaceLastNumber(with: solve(lhs: currentEquation.lastNumber!, op: .DividedBy, rhs: Number(value: "100")))
+//            currentNumber?.containsDigits = true
+//        }
+//    }
     
     
 /* * * * * * * * * * * * * * * * * */
@@ -490,7 +530,7 @@ class Calculator {
                 return
             } else {
                 //Clear current number
-                if (currentEquation.lastNumber!.containsDigits || currentEquation.lastNumber!.value.contains(".") || currentEquation.lastNumber!.value.contains("-")) {
+                if (currentNumber!.containsDigits || currentNumber!.value.contains(".") || currentNumber!.value.contains("-")) {
                     currentEquation.removeLastNumber()
                     currentEquation.onlyNumberIsAnswerFromLastEquation = false
                     return

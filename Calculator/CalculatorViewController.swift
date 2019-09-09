@@ -5,6 +5,8 @@
 //  Created by Bradley Christensen on 5/15/19.
 //  Copyright © 2019 Bradley Christensen. All rights reserved.
 //
+//  Version 1.1
+//
 
 import UIKit
 
@@ -17,16 +19,20 @@ class CalculatorViewController: UIViewController, UIScrollViewDelegate
     struct Constants {
         static let ButtonFont = "Helvetica"
         static let InputLabelFont = "Helvetica"
+        static let minimumFontSize: CGFloat = 10
         static let ButtonTextColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
     }
     
     private func logScaledFont() -> UIFont {
         let frameSize = logScrollView!.frame.height - 16
-        let fontSize: CGFloat?
+        var fontSize: CGFloat?
         if (UIDevice.current.orientation.isLandscape) {
-            fontSize = frameSize / 10
+            fontSize = frameSize / 7
         } else {
             fontSize = frameSize / 12
+        }
+        if fontSize! < Constants.minimumFontSize {
+            fontSize = Constants.minimumFontSize
         }
         return UIFontMetrics.init(forTextStyle: .body).scaledFont(for: UIFont(name: Constants.InputLabelFont, size: fontSize!)!)
     }
@@ -80,7 +86,7 @@ class CalculatorViewController: UIViewController, UIScrollViewDelegate
         case 14: pressedButton = .Muliply
         case 15: pressedButton = .Divide
         case 16: pressedButton = .ChangeSign
-        case 17: pressedButton = .Percent
+        case 17: pressedButton = .Exponent
         case 18: pressedButton = .Clear
         default: break
         }

@@ -14,15 +14,15 @@
         <!--Calculator View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="CalculatorViewController" customModule="Calculator" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="CalculatorViewController" customModule="CalculatorBJC" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC" userLabel="Calculator View">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xhy-Ni-VSg" userLabel="Log Scroll View" customClass="LogScrollView" customModule="Calculator" customModuleProvider="target">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xhy-Ni-VSg" userLabel="Log Scroll View" customClass="LogScrollView" customModule="CalculatorBJC" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="44" width="414" height="280.33333333333331"/>
                             </scrollView>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uGS-jd-0XO" userLabel="Input Scroll View" customClass="InputScrollView" customModule="Calculator" customModuleProvider="target">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uGS-jd-0XO" userLabel="Input Scroll View" customClass="InputScrollView" customModule="CalculatorBJC" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="324.33333333333331" width="414" height="116.66666666666669"/>
                             </scrollView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bd8-BQ-J4Z" userLabel="Button Panel">
@@ -158,10 +158,10 @@
                                                             <action selector="CalculatorButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="0FJ-hG-zbI"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" tag="14" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UlL-QA-gBb">
+                                                    <button opaque="NO" tag="17" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UlL-QA-gBb">
                                                         <rect key="frame" x="81.000000000000028" y="0.0" width="73.333333333333343" height="95"/>
                                                         <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <state key="normal" title="*"/>
+                                                        <state key="normal" title="^"/>
                                                         <connections>
                                                             <action selector="CalculatorButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Ony-S6-WQ0"/>
                                                         </connections>
@@ -171,18 +171,18 @@
                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="73l-aZ-Pmy" userLabel="% &amp; -">
                                                 <rect key="frame" x="0.0" y="103" width="154.33333333333334" height="95.333333333333314"/>
                                                 <subviews>
-                                                    <button opaque="NO" tag="17" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HvF-Jo-d2e">
+                                                    <button opaque="NO" tag="14" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HvF-Jo-d2e">
                                                         <rect key="frame" x="0.0" y="0.0" width="73" height="95.333333333333329"/>
                                                         <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <state key="normal" title="%"/>
+                                                        <state key="normal" title="*"/>
                                                         <connections>
                                                             <action selector="CalculatorButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="HGV-J4-s9s"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" tag="13" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mg5-qR-UKQ">
+                                                    <button opaque="NO" tag="15" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mg5-qR-UKQ">
                                                         <rect key="frame" x="81.000000000000028" y="0.0" width="73.333333333333343" height="95.333333333333329"/>
                                                         <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <state key="normal" title="-"/>
+                                                        <state key="normal" title="/"/>
                                                         <connections>
                                                             <action selector="CalculatorButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Rdp-zJ-0Zh"/>
                                                         </connections>
@@ -192,18 +192,18 @@
                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="U9M-A3-E5l" userLabel="+/- &amp; +">
                                                 <rect key="frame" x="0.0" y="206.33333333333337" width="154.33333333333334" height="95.333333333333314"/>
                                                 <subviews>
-                                                    <button opaque="NO" tag="16" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sms-uh-pfC">
+                                                    <button opaque="NO" tag="12" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sms-uh-pfC">
                                                         <rect key="frame" x="0.0" y="0.0" width="73" height="95.333333333333329"/>
                                                         <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <state key="normal" title="+/-"/>
+                                                        <state key="normal" title="+"/>
                                                         <connections>
                                                             <action selector="CalculatorButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Apk-sz-epR"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" tag="12" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OT6-t9-qXY">
+                                                    <button opaque="NO" tag="13" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OT6-t9-qXY">
                                                         <rect key="frame" x="81.000000000000028" y="0.0" width="73.333333333333343" height="95.333333333333329"/>
                                                         <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <state key="normal" title="+"/>
+                                                        <state key="normal" title="-"/>
                                                         <connections>
                                                             <action selector="CalculatorButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="nMP-lA-3kn"/>
                                                         </connections>
@@ -213,10 +213,10 @@
                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="kKh-xo-lfm" userLabel="/ &amp; =">
                                                 <rect key="frame" x="0.0" y="309.66666666666663" width="154.33333333333334" height="95.333333333333314"/>
                                                 <subviews>
-                                                    <button opaque="NO" tag="15" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qyU-5e-BVk">
+                                                    <button opaque="NO" tag="16" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qyU-5e-BVk">
                                                         <rect key="frame" x="0.0" y="0.0" width="73" height="95.333333333333329"/>
                                                         <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <state key="normal" title="/"/>
+                                                        <state key="normal" title="+/-"/>
                                                         <connections>
                                                             <action selector="CalculatorButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="6A8-bv-MPZ"/>
                                                         </connections>
